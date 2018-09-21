@@ -11,33 +11,37 @@ proc main() {
 
   var BA: [BlockSpace] int ;
   var indicesArr: [1..0] int;
-
   fillRandom(BA);
+ 
+	for loc in Locales do on loc {
+	 const indices = BA.localSubdomains();
+   indicesArr.push_back(indices.low);
+  }
+  
+  indicesArr.push_back(BA.size+1);
 
-
-  forall L in Locales {
-    on L {
-    const indices = BA.localSubdomain();
-    indicesArr.push_back(indices.low);
-    indicesArr.push_back(indices.high);
-    sort(BA[indices.low..indices.high]);
+  coforall loc in Locales {
+  on loc do{
+   for s in BA.localSubdomains(){
+      sort(BA[s]);
     }
   }
-  
-  var length = indicesArr.size;
-  var i = 1;
-  while ((i+3) <= length) {
-
-  var l = indicesArr[i];
-  var m = indicesArr[i+1];
-  var r = indicesArr[i+3];
- 
-  simpleMerge.merge(BA,l,m,r);
-  
-  indicesArr[i+2] = l;
-  i+=2;
   }
 
-writeln(isSorted(BA));
-}
+ //merge
+ var start_l = 1;
+ var end_l = 2;
+ var end_r = 0;
+ while(end_l < indicesArr.size) {
+		
+		end_r = end_l+1;
 
+		if(end_r > indicesArr.size) {
+			break;
+  	}
+		BA = merge(BA,indicesArr[start_l], indicesArr[end_l], indicesArr[end_r]);
+		end_l = end_r;
+  } 
+
+ writeln(isSorted(BA));
+ }
