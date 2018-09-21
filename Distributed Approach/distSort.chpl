@@ -13,8 +13,8 @@ proc main() {
   var indicesArr: [1..0] int;
   fillRandom(BA);
  
-	for loc in Locales do on loc {
-	 const indices = BA.localSubdomains();
+  for loc in Locales do on loc {
+   const indices = BA.localSubdomains();
    indicesArr.push_back(indices.low);
   }
   
